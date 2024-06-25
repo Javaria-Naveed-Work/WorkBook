@@ -1,0 +1,38 @@
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- WorkBook logo or text on the left -->
+    <a class="navbar-brand font-weight-bold" href='#'>WorkBook</a>
+
+    <!-- Navigation items -->
+    <% if user_signed_in? %>
+      <!-- Display these links when user is logged in -->
+      <ul class="navbar-nav ml-auto d-flex flex-row">
+        <li class="nav-item mr-3">
+          <%= link_to image_tag('icons8-add-friends-50.png', alt: 'Add Friends', class: 'icon-class'), add_friends_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item mr-3">
+          <%= link_to image_tag('icons8-feed-30.png', alt: 'Feed', class: 'icon-class'), feed_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item mr-3">
+          <%= link_to image_tag('icons8-male-user-48.png', alt: 'User Profile', class: 'icon-class'), profile_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to 'Logout', sign_out_path, method: :delete, class: 'nav-link', data: { turbo_method: :delete, confirm: "Are you sure you want to log out?" } %>
+        </li>
+      </ul>
+    <% else %>
+      <!-- Display these links when user is not logged in -->
+      <ul class="navbar-nav ml-auto">
+        <% if current_page?(new_user_registration_path) %>
+          <li class="nav-item">
+            <%= link_to 'Login', new_user_session_path, class: 'nav-link' %>
+          </li>
+        <% elsif current_page?(new_user_session_path) %>
+          <li class="nav-item">
+            <%= link_to 'Sign Up', new_user_registration_path, class: 'nav-link' %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</nav>

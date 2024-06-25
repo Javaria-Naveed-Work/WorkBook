@@ -1,0 +1,13 @@
+<h2>Edit Post</h2>
+
+<%= form_for(@post, url: post_path(@post), html: { multipart: true }, method: :patch) do |f| %>
+  <div class="form-group">
+    <%= f.text_area :content, class: "form-control", placeholder: "What's on your mind?" %>
+  </div>
+  <div class="form-group">
+    <%= f.file_field :pic, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= f.submit "Update Post", class: "btn btn-primary" %>
+  </div>
+<% end %>

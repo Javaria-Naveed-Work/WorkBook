@@ -1,0 +1,68 @@
+<div class="container">
+  <!-- Display Cover Photo -->
+  <div class="cover-photo">
+    <% if @user.cover_photo.present? %>
+      <%= image_tag @user.cover_photo.url, class: "cover-image", style: "width: 100%; height: auto;" %>
+    <% else %>
+      <%= image_tag "default_cover_picture.jpg", class: "cover-image", style: "width: 100%; height: auto;" %>
+    <% end %>
+  </div>
+
+  <!-- Display Profile Photo -->
+  <div class="profile-photo">
+    <% if @user.profile_photo.present? %>
+      <%= image_tag @user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 150px; height: 150px; margin-left: 30px;" %>
+    <% else %>
+      <%= image_tag "default_profile_picture.png", class: "img-fluid rounded-circle", style: "width: 150px; height: 150px; margin-left: 30px;" %>
+    <% end %>
+    <div style="margin-left: 48px">
+      <h2 ><%= @user.name %></h2>
+      <p><strong><%= link_to "Friends #{@user.friends_count}", all_friends_user_path(@user.id) %></strong> </p>
+      <strong>Posts <%=@user.posts_count %> </strong>
+    </div>
+
+  </div>
+
+  <div style="margin-left: 900px; margin-bottom: 10px">
+  <%= form_for @user, url: update_profile_photo_profile_path, html: { multipart: true } do |f| %>
+    <div class="form-group" >
+      <%= f.file_field :profile_photo %>
+    </div>
+    <%= f.submit "Change Profile Photo", class: "btn btn-primary btn-sm" %>
+
+<% end %>
+  <%= form_for @user, url: update_cover_photo_profile_path, html: { multipart: true } do |f| %>
+    <div class="form-group">
+      <%= f.file_field :cover_photo %>
+    </div>
+    <%= f.submit "Change Cover Photo", class: "btn btn-primary btn-sm" %>
+  <% end %>
+    </div>
+
+</div>
+
+<%= link_to "Make a Post", new_post_path, class: "btn btn-primary ", style:"margin-left: 910px"%>
+
+<h2>Posts</h2>
+<% @posts.each do |post| %>
+  <div class="post">
+    <% if post.user.profile_photo.present? %>
+      <%= image_tag post.user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px;" %>
+    <% end %>
+    <b><%=current_user.name %></b>
+    <small><%= post.created_at.strftime('%d %B %Y at %I:%M %p') %></small>
+    <p><%= post.content %></p>
+    <% if post.pic.present? %>
+      <%= image_tag post.pic.url, class: "post-image", style: "width: 250px; height: 250px; object-fit: cover;" %>
+    <% end %>
+    <p><strong><%= post.likes_count %></strong> Likes | <strong><%= link_to "#{post.comments_count} Comments", post_path(post) %></strong> </p>
+    <% if current_user && post.likes.any? { |like| like.user_id == current_user.id }%>
+      <%= link_to "Unlike", unlike_post_path(post), method: :delete, class: "btn btn-danger btn-sm" %>
+    <% else %>
+      <%= link_to "Like", like_post_path(post), method: :post, class: "btn btn-primary btn-sm" %>
+    <% end %>
+
+    <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary btn-sm" %>
+    <%= link_to "Destroy", post_path(post), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+  </div>
+<% end %>

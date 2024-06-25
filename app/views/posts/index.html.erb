@@ -1,0 +1,22 @@
+<h2>Recent Posts</h2>
+<% @posts.each do |post| %>
+  <div class="post">
+    <b><%=current_user.name %></b>
+    <small><%= post.created_at.strftime('%d %B %Y at %I:%M %p') %></small>
+    <p><%= post.content %></p>
+    <% if post.pic.present? %>
+      <%= image_tag post.pic.url, class: "post-image", style: "width: 250px; height: 250px; object-fit: cover;"%>
+    <% end %>
+    <span class="likes-count"><%= post.likes_count %> Likes</span>
+    <span class="comments-count"><%= link_to "#{post.comments_count} Comments", post_path(post) %></span>
+    <br/>
+    <% if current_user && post.user.likes.any? { |like| like.user_id == current_user.id }%>
+      <%= link_to "Unlike", unlike_post_path(post), method: :delete, class: "btn btn-danger btn-sm" %>
+    <% else %>
+      <%= link_to "Like", like_post_path(post), method: :post, class: "btn btn-primary btn-sm" %>
+    <% end %>
+
+    <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary btn-sm" %>
+    <%= link_to "Destroy", post_path(post), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+  </div>
+<% end %>
