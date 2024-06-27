@@ -1,0 +1,23 @@
+<div class="post" style="margin-bottom: 10px;">
+  <% if post.user.profile_photo.present? %>
+    <%= image_tag post.user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px;" %>
+  <% end %>
+  <b><%=post.user.name %></b>
+  <small>Posted <%= time_ago_in_words(post.created_at) %> ago</small>
+  <p><%= post.content %></p>
+  <% if post.pic.present? %>
+    <%= image_tag post.pic.url, class: "post-image", style: "width: 250px; height: 250px; object-fit: cover;"%>
+  <% end %>
+  <p><strong><%= post.likes_count %></strong> Likes | <strong><%= link_to "#{post.comments_count} Comments", post_path(post) %></strong> </p>
+
+  <% if current_user && post.likes.any? { |like| like.user_id == current_user.id }%>
+    <%= link_to "Unlike", unlike_post_path(post), method: :delete, class: "btn btn-danger btn-sm" %>
+  <% else %>
+    <%= link_to "Like", like_post_path(post), method: :post, class: "btn btn-primary btn-sm" %>
+  <% end %>
+
+  <%if post.user == current_user %>
+    <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary btn-sm" %>
+
+    <%= link_to "Destroy", post_path(post), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm"%>
+  <%end %> </div>

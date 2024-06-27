@@ -11,7 +11,10 @@ resources :users, only: [:index, :show] do
       get 'all_friends', to: 'friends#all_friends'
       get 'show_friend/:friend_id', to: 'friends#show_friend', as: 'show_friend'
     end
-  end
+end
+
+  # get 'search_friend', to:'friends#search'
+
   resources :posts do
   member do
     get 'like'
