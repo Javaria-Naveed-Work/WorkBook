@@ -44,4 +44,5 @@ end
   def friendship_params
     params.require(:friendship).permit(:id)
   end
+
 end

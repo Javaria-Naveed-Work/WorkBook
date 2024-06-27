@@ -45,7 +45,7 @@
 
 <h2>Posts</h2>
 <% @posts.each do |post| %>
-  <div class="post">
+  <div class="post" style="margin-bottom: 10px;">
     <% if post.user.profile_photo.present? %>
       <%= image_tag post.user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px;" %>
     <% end %>

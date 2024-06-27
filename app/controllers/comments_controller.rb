@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
-  before_action :find_post
-  before_action :find_comment, only: [:create_reply, :edit, :update, :destroy]
+  before_action :set_post
+  before_action :find_comment, only: [:create_reply, :edit, :destroy]
 
   def create
     @comment = @post.comments.new(comment_params)
@@ -39,7 +39,8 @@ class CommentsController < ApplicationController
   end
 
   def create_reply
-    @reply = @comment.replies.new(comment_params)
+    @reply=Comment.new(comment_params)
+    @reply.parent_id = params[:comment_id]
     @reply.user = current_user
     @reply.post = @post
 
@@ -52,13 +53,22 @@ class CommentsController < ApplicationController
     end
   end
   private
-  def find_post
-    @post = Post.strict_loading.find(params[:post_id])
-  end
+  def set_post
+    @post = Post.find_by(id: params[:post_id])
+    if @post.nil?
+      flash[:alert] = "Post not found"
+      redirect_to posts_path
+    end  end
 
   def find_comment
-    @comment = @post.comments.strict_loading!.find(params[:id])
+    @comment = Comment.find_by(params[:id])
+    if @comment.nil?
+      flash[:alert] = "Comment not found"
+      redirect_to @post
+    end
+      # @post.comments.find(params[:id])
   end
+
 
   def comment_params
     params.require(:comment).permit(:comment_id, :content, :post_id)

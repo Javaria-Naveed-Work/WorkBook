@@ -20,25 +20,31 @@
 <div id="comments">
   <% @post.comments.each do |comment| %>
     <div class="comment">
+
       <%if comment.parent_id == nil %>
-      <p><strong><%= comment.user.name %>:</strong> <%= comment.content %></p>
-        <%= link_to "Edit", edit_comment_path(comment, post_id: @post.id), class: "btn btn-primary btn-sm" %>
-        <%= link_to "Destroy", comment_path(comment, post_id: @post.id), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+      <p><strong><%= comment.user.name %></strong> <%= comment.content %></p>
+        <%if comment.user == current_user %>
+          <%#= link_to "Edit", edit_comment_path(comment, post_id: @post.id), class: "btn btn-primary btn-sm" %>
+          <%= link_to "Destroy", comment_path(comment, post_id: @post.id), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm", style:"margin-bottom: 10px;" %>
+        <%end %>
         <% comment.replies.each do |reply| %>
           <div class="reply" style="margin-left: 20px;">
-          <p><strong><%= reply.user.name %>:</strong> <%= reply.content %></p>
+          <p ><strong><%= reply.user.name %></strong> <%= reply.content %></p>
         </div>
       <% end %>
     </div>
     <!-- Reply Form -->
-    <%= form_with model: comment.replies.new, url: reply_comment_path(post_id: @post.id, comment_id: comment.id), class: "reply-form" do |form| %>
-      <div>
-        <%= form.text_area :content, placeholder: "Reply to #{comment.user.name}..." %>
-      </div>
-      <div>
-        <%= form.submit "Reply", class: "btn btn-primary btn-sm" %>
-      </div>
-        <%end %>
+        <div style="margin-left: 20px;">
+          <%= form_with model: comment.replies.new, url: reply_comment_path(post_id: @post.id, comment_id: comment.id), class: "reply-form" do |form| %>
+            <div>
+              <%= form.text_area :content, placeholder: "Reply to #{comment.user.name}..." %>
+            </div>
+            <div>
+              <%= form.submit "Reply", class: "btn btn-primary btn-sm" %>
+            </div>
+          <%end %>
+        </div>
+
     <% end %>
   <% end %>
 </div>

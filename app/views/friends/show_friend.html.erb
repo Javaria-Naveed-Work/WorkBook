@@ -27,11 +27,11 @@
 
 <h2>Posts</h2>
 <% @user.posts.reverse_each do |post| %>
-  <div class="post">
+  <div class="post" style="margin-bottom: 10px;">
     <% if post.user.profile_photo.present? %>
       <%= image_tag post.user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px;" %>
     <% end %>
-    <b><%=current_user.name %></b>
+    <b><%=@user.name %></b>
     <small><%= post.created_at.strftime('%d %B %Y at %I:%M %p') %></small>
     <p><%= post.content %></p>
     <% if post.pic.present? %>

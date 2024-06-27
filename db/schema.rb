@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_25_070051) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_26_073220) do
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "post_id", null: false
-    t.text "content"
+    t.text "content", null: false
     t.integer "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -42,7 +42,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_25_070051) do
   end
 
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "content"
+    t.string "content", null: false
     t.string "pic"
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -60,7 +60,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_25_070051) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name"
+    t.string "name", null: false
     t.string "profile_photo"
     t.string "cover_photo"
     t.integer "posts_count", default: 0

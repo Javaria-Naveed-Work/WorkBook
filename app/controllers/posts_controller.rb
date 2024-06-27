@@ -78,7 +78,11 @@ class PostsController < ApplicationController
   end
 
   def set_post
-    @post = Post.includes(:user, :likes, comments: [:user, replies: :user]).strict_loading!(mode: :n_plus_one_only).find(params[:id])
+    @post = Post.includes(:user, :likes, comments: [:user, replies: :user]).strict_loading!(mode: :n_plus_one_only).find_by(id:params[:id])
+    if @post.nil?
+      flash[:alert] = "Post not found"
+      redirect_to feed_path
+    end
   end
 
   def redirect_path

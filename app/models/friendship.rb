@@ -8,15 +8,38 @@ class Friendship < ApplicationRecord
   after_update :increment_friends_count_cache, if: :status_updated_to_accepted?
   before_destroy :decrement_friends_count_cache
 
+  # def increment_friends_count_cache
+  #   user.increment!(:friends_count) if status == 'accepted'
+  #   friend.increment!(:friends_count) if status == 'accepted'
+  # end
+  #
+  # def decrement_friends_count_cache
+  #   user.decrement!(:friends_count) if status == 'accepted'
+  #   friend.decrement!(:friends_count) if status == 'accepted'
+  # end
+
   def increment_friends_count_cache
-    user.increment!(:friends_count) if status == 'accepted'
-    friend.increment!(:friends_count) if status == 'accepted'
+    if status == 'accepted'
+      ActiveRecord::Base.transaction do
+        user.lock!
+        friend.lock!
+        user.update!(friends_count: user.friends_count + 1)
+        friend.update!(friends_count: friend.friends_count + 1)
+      end
+    end
   end
 
   def decrement_friends_count_cache
-    user.decrement!(:friends_count) if status == 'accepted'
-    friend.decrement!(:friends_count) if status == 'accepted'
+    if status == 'accepted'
+      ActiveRecord::Base.transaction do
+        user.lock!
+        friend.lock!
+        user.update!(friends_count: user.friends_count - 1)
+        friend.update!(friends_count: friend.friends_count - 1)
+      end
+    end
   end
+
 
   def status_updated_to_accepted?
     saved_change_to_status?(from: 'pending', to: 'accepted')

@@ -5,5 +5,5 @@ class Post < ApplicationRecord
 
   mount_uploader :pic, PicUploader
 
-  validates :content, presence: true
+  validates :content, presence: true, length: { maximum: 500 }
 end

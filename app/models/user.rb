@@ -7,23 +7,36 @@ class User < ApplicationRecord
   mount_uploader :cover_photo, CoverPhotoUploader
   mount_uploader :profile_photo, ProfilePhotoUploader
 
-  has_many :posts, dependent: :destroy
-  has_many :likes, dependent: :destroy
-  has_many :comments, dependent: :destroy
+  with_options dependent: :destroy do |assoc|
+    assoc.has_many :posts
+    assoc.has_many :likes
+    assoc.has_many :comments
 
-  has_many :friendships, dependent: :destroy
+    assoc.has_many :friendships
+    #friendships initiated by other user
+    assoc.has_many :inverse_friendships, class_name: 'Friendship', foreign_key: 'friend_id'
+  end
+
   has_many :friends, -> { where(friendships: { status: 'accepted' }) }, through: :friendships
-
   # Friends that have added you
-  has_many :inverse_friendships, class_name: 'Friendship', foreign_key: 'friend_id', dependent: :destroy
   has_many :inverse_friends, -> { where(friendships: { status: 'accepted' }) }, through: :inverse_friendships, source: :user
 
-  def all_friends
-    # friends + inverse_friends
+  validates :name, presence: true
 
-    friend_ids = friendships.strict_loading!(mode: :n_plus_one_only).where(status: 'accepted').pluck(:friend_id)
-    inverse_friend_ids = inverse_friendships.where(status: 'accepted').pluck(:user_id)
-    User.where(id: friend_ids + inverse_friend_ids)
+  def all_friends
+
+    #uses two join
+    friends + inverse_friends
+
+    #User.joins(:friendships)
+    #              .where(friendships: { user_id: id, status: 'accepted' })
+    #              .or(User.joins(:friendships).where(friendships: { friend_id: id, status: 'accepted' }))
+
+    # Four queries
+    # User.joins(:friendships).where(Friendship.table_name => { user_id: id, status: 'accepted' } or { friend_id: id, status: 'accepted' })
+    # friend_ids = friendships.where(status: 'accepted').pluck(:friend_id)
+    # inverse_friend_ids = inverse_friendships.where(status: 'accepted').pluck(:user_id)
+    # User.where(id: friend_ids + inverse_friend_ids)
   end
 
 end

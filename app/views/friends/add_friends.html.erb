@@ -1,39 +1,29 @@
-<%# @users.each do |user| %>
-<!--  <div class="user">-->
-    <%# unless current_user == user %>
-<!--      <strong><%#= user.name %></strong>-->
-      <%# if current_user.friendships.find_by(friend_id: user.id, status: 'pending') %>
-<!--        <span><small>Friend request sent</small></span>-->
-      <%# elsif current_user.friendships.find_by(friend_id: user.id, status: 'accepted') || current_user.inverse_friendships.find_by(user_id: user.id, status: 'accepted') %>
-        <%#= link_to 'Remove Friend', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
-      <%# elsif current_user.inverse_friendships.find_by(user_id: user.id, status: 'pending') %>
-        <%#= link_to "Accept Friend Request", accept_request_user_path(user), method: :patch, class: "btn btn-primary btn-sm" %>
-        <%#= link_to 'Reject Friend Request', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
-      <%# else%>
-        <%#= link_to "Send Friend Request", send_request_user_path(user), method: :post, class: "btn btn-primary btn-sm" %>
-      <%# end %>
-    <%# end %>
-<!--  </div>-->
-<%# end %>
-
 <% @users.each do |user| %>
-  <div class="user">
-    <% unless current_user == user %>
-      <strong><%= user.name %></strong>
-
-      <% friendship = current_user.friendships.find { |f| f.friend_id == user.id } %>
-      <% inverse_friendship = current_user.inverse_friendships.find { |f| f.user_id == user.id } %>
-
-      <% if friendship && friendship.status == 'pending' %>
-        <span><small>Friend request sent</small></span>
-      <% elsif (friendship && friendship.status == 'accepted') || (inverse_friendship && inverse_friendship.status == 'accepted') %>
-        <%= link_to 'Remove Friend', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
-      <% elsif inverse_friendship && inverse_friendship.status == 'pending' %>
-        <%= link_to "Accept Friend Request", accept_request_user_path(user), method: :patch, class: "btn btn-primary btn-sm" %>
-        <%= link_to 'Reject Friend Request', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
-      <% else %>
-        <%= link_to "Send Friend Request", send_request_user_path(user), method: :post, class: "btn btn-primary btn-sm" %>
-      <% end %>
+  <% unless current_user == user %>
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+      <% if user.profile_photo.present? %>
+        <%= image_tag user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px; margin-right:5px;" %>
+        <%else %>
+        <%= image_tag "default_profile_picture.png", class: "img-fluid rounded-circle", style: "width: 35px; height: 35px; margin-right:5px;" %>
     <% end %>
-  </div>
+      <strong style="flex: 1;"><%= user.name %></strong>
+      <div>
+        <% friendship = current_user.friendships.find { |f| f.friend_id == user.id } %>
+        <% inverse_friendship = current_user.inverse_friendships.find { |f| f.user_id == user.id } %>
+
+        <% if friendship && friendship.status == 'pending' %>
+<!--          <span><small>Friend request sent</small></span>-->
+          <%= link_to 'Withdraw Friend Request', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-secondary btn-sm", style: "margin-left: 10px;" %>
+
+      <% elsif (friendship && friendship.status == 'accepted') || (inverse_friendship && inverse_friendship.status == 'accepted') %>
+          <%= link_to 'Remove Friend', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm", style: "margin-left: 10px;" %>
+        <% elsif inverse_friendship && inverse_friendship.status == 'pending' %>
+          <%= link_to "Accept Friend Request", accept_request_user_path(user), method: :patch, class: "btn btn-primary btn-sm", style: "margin-left: 10px;" %>
+          <%= link_to 'Reject Friend Request', reject_request_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm", style: "margin-left: 10px;" %>
+        <% else %>
+          <%= link_to "Send Friend Request", send_request_user_path(user), method: :post, class: "btn btn-primary btn-sm", style: "margin-left: 10px;" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 <% end %>

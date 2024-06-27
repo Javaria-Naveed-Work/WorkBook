@@ -13,9 +13,13 @@ class FriendsController < ApplicationController
   end
 
 
+  private
  def friend_params
    params.require(:friend).permit(:id)
  end
-  #
+
+  # def set_friends
+  #   @friends = current_user.all_friends
   # end
+
 end
