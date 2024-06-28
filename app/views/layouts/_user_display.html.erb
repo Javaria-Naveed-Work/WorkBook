@@ -1,9 +1,5 @@
 <div style="display: flex; align-items: center; margin-bottom: 10px;">
-  <% if user.profile_photo.present? %>
-    <%= image_tag user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px; margin-right:5px;" %>
-  <% else %>
-    <%= image_tag "default_profile_picture.png", class: "img-fluid rounded-circle", style: "width: 35px; height: 35px; margin-right:5px;" %>
-  <% end %>
+  <%= render partial: 'layouts/pic_display', locals: { user: user } %>
   <strong style="flex: 1;"><%= user.name %></strong>
   <div>
     <% friendship = current_user.friendships.find { |f| f.friend_id == user.id } %>

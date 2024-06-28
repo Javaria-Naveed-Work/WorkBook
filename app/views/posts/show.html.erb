@@ -1,39 +1,23 @@
-<% if @post.user.profile_photo.present? %>
-  <%= image_tag @post.user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px;" %>
-<% end %>
-<Strong><%= @post.user.name %></Strong>
-<small><%= @post.created_at.strftime('%d %B %Y at %I:%M %p') %></small>
-<br/>
-<p><%= @post.content %></p>
-<% if @post.pic.present? %>
-  <%= image_tag @post.pic.url, class: "post-image", style: "width: 250px; height: 250px; object-fit: cover;"%>
-<% end %>
-<p><strong><%= @post.likes_count %></strong> Likes | <strong><%= @post.comments_count %></strong> Comments</p>
-
-<% if current_user && @post.likes.any? { |like| like.user_id == current_user.id }%>
-  <%= link_to "Unlike", unlike_post_path(@post), method: :delete, class: "btn btn-danger btn-sm" %>
-<% else %>
-  <%= link_to "Like", like_post_path(@post), method: :post, class: "btn btn-primary btn-sm" %>
-<% end %>
+<%= render partial: 'layouts/post', locals: { post: @post, current_user: current_user } %>
 
 <h3>Comments</h3>
 <div id="comments">
   <% @post.comments.each do |comment| %>
     <div class="comment">
 
-      <%if comment.parent_id == nil %>
-      <p><strong><%= comment.user.name %></strong> <%= comment.content %></p>
-        <%if comment.user == current_user %>
+      <% if comment.parent_id == nil %>
+        <p><strong><%= comment.user.name %></strong> <%= comment.content %></p>
+        <% if comment.user == current_user %>
           <%#= link_to "Edit", edit_comment_path(comment, post_id: @post.id), class: "btn btn-primary btn-sm" %>
-          <%= link_to "Destroy", comment_path(comment, post_id: @post.id), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm", style:"margin-bottom: 10px;" %>
-        <%end %>
+          <%= link_to "Destroy", comment_path(comment, post_id: @post.id), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm", style: "margin-bottom: 10px;" %>
+        <% end %>
         <% comment.replies.each do |reply| %>
           <div class="reply" style="margin-left: 20px;">
-          <p ><strong><%= reply.user.name %></strong> <%= reply.content %></p>
+            <p><strong><%= reply.user.name %></strong> <%= reply.content %></p>
+          </div>
+        <% end %>
         </div>
-      <% end %>
-    </div>
-    <!-- Reply Form -->
+        <!-- Reply Form -->
         <div style="margin-left: 20px;">
           <%= form_with model: comment.replies.new, url: reply_comment_path(post_id: @post.id, comment_id: comment.id), class: "reply-form" do |form| %>
             <div>
@@ -42,10 +26,10 @@
             <div>
               <%= form.submit "Reply", class: "btn btn-primary btn-sm" %>
             </div>
-          <%end %>
+          <% end %>
         </div>
 
-    <% end %>
+      <% end %>
   <% end %>
 </div>
 

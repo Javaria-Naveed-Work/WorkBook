@@ -16,33 +16,15 @@
       <%= image_tag "default_profile_picture.png", class: "img-fluid rounded-circle", style: "width: 150px; height: 150px; margin-left: 30px;" %>
     <% end %>
     <div style="margin-left: 48px">
-      <h2 ><%= @user.name %></h2>
-      <p><strong>Friends <%=@user.friends_count%></strong> </p>
-      <strong>Posts <%=@user.posts_count %> </strong>
+      <h2><%= @user.name %></h2>
+      <p><strong>Friends <%= @user.friends_count %></strong></p>
+      <strong>Posts <%= @user.posts_count %> </strong>
     </div>
 
   </div>
 
-<!--</div>-->
-
-<h2>Posts</h2>
-<% @user.posts.reverse_each do |post| %>
-  <div class="post" style="margin-bottom: 10px;">
-    <% if post.user.profile_photo.present? %>
-      <%= image_tag post.user.profile_photo.url, class: "img-fluid rounded-circle", style: "width: 35px; height: 35px;" %>
-    <% end %>
-    <b><%=@user.name %></b>
-    <small><%= post.created_at.strftime('%d %B %Y at %I:%M %p') %></small>
-    <p><%= post.content %></p>
-    <% if post.pic.present? %>
-      <%= image_tag post.pic.url, class: "post-image", style: "width: 250px; height: 250px; object-fit: cover;" %>
-    <% end %>
-    <p><strong><%= post.likes_count %></strong> Likes | <strong><%= link_to "#{post.comments_count} Comments", post_path(post) %></strong> </p>
-    <% if current_user && post.likes.exists?(user_id: current_user.id) %>
-      <%= link_to "Unlike", unlike_post_path(post), method: :delete, class: "btn btn-danger btn-sm" %>
-    <% else %>
-      <%= link_to "Like", like_post_path(post), method: :post, class: "btn btn-primary btn-sm" %>
-    <% end %>
-  </div>
-<% end %>
+  <h2>Posts</h2>
+  <% @user.posts.each do |post| %>
+    <%= render partial: 'layouts/post', locals: { post: post, current_user: current_user } %>
+    <%end %>
 </div>

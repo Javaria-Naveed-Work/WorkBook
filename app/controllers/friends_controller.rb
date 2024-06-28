@@ -12,7 +12,7 @@ class FriendsController < ApplicationController
   end
 
   def show_friend
-    @user = User.includes(:posts).strict_loading!(mode: :n_plus_one_only).find(params[:friend_id])
+    @user = User.includes(posts: :likes).strict_loading!(mode: :n_plus_one_only).find(params[:friend_id])
   end
 
   private
